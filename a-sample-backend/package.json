@@ -1,0 +1,14 @@
+{
+  "name": "a-sample-backend",
+  "version": "0.1.0",
+  "description": "A simple pouchdb server to run tests on",
+  "main": "server.js",
+  "author": "Xavier Vergés",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.12.3",
+    "express-pouchdb": "^0.14.0",
+    "memdown": "^1.0.0",
+    "pouchdb": "^3.4.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "GiveLoveToYourAdapters",
+  "version": "0.1.0",
+  "description": "Making IBM Worklight adapters happier with jshint, jasmine and code reuse",
+  "keywords": [
+    "ibm",
+    "mobilefirst",
+    "worklight",
+    "sample",
+    "jasmine",
+    "pods"
+  ],
+  "author": "xverges",
+  "license": "MIT",
+  "dependencies": {
+    "grunt": "^0.4.5",
+    "grunt-express": "^1.4.1"
+  }
+}
