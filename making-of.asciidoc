@@ -2,10 +2,11 @@
 Xavier Vergés 
 v0.1.0, 2015-3-16
 :toc:
+:toc-placement: preamble
 :source-highlighter: pygments 	// coderay, highlightjs, prettify, and pygments.
 :doctype: Article
 
-What follows are the (decorated) notes I'm taking while coding this project.
+What follows are the (decorated) notes I take while working on coding this project.
 
 == Creating the MobileFirst Platform project from the CLI
 
@@ -81,11 +82,7 @@ our apps and our tests
 
 [source, json]
 ----
-{
-  "undef": true,
-  "unused": true,
-  "strict": true
-}
+include::.jshintrc[]
 ----
 
 But we will also want to set some settings according to the environment where
@@ -93,13 +90,30 @@ our adapters are executed. We will do it in the file `adapters/.jshintrc`:
 
 [source, json]
 ----
-{
-  "extends": "../.jshintrc",  // <1>
-  "rhino": true, <2>
-  "predef": ["WL"]
-}
+include::adapters/.jshintrc[]
 ----
-<1> Get the settings from the root folder
-<2> Tell jshint that we run on rhino
+
+To drive it with Grunt, we will need to install
+https://github.com/gruntjs/grunt-contrib-jshint[grunt-contrib-jshint]
+
+----
+npm install grunt-contrib-jshint --save
+----
+
+On the `jshint` task, we  want to make sure that `.jshintrc` files are used and
+that the `Gruntfile.js` itself is being checked:
+
+----
+jshint: {
+  options: {
+    jshintrc: true
+  },
+  gruntfile: {                      // An arbitary name for the subtask
+    src: [patterns.js.gruntfile]    // patterns holds most file paths
+  },
+----
+
+And now, `grunt jshint` checks our adapters and our gruntfile.
+
 
 
