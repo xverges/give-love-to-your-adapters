@@ -1,5 +1,5 @@
 {
-  "name": "GiveLoveToYourAdapters",
+  "name": "give-love-to-yourAdapters",
   "version": "0.1.0",
   "description": "Making IBM Worklight adapters happier with jshint, jasmine and code reuse",
   "keywords": [
