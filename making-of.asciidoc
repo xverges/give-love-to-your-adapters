@@ -1,0 +1,105 @@
+= Give Love To Your JavaScript Adapters: the Making-Of
+Xavier Vergés 
+v0.1.0, 2015-3-16
+:toc:
+:source-highlighter: pygments 	// coderay, highlightjs, prettify, and pygments.
+:doctype: Article
+
+What follows are the (decorated) notes I'm taking while coding this project.
+
+== Creating the MobileFirst Platform project from the CLI
+
+----
+>mfp create give-love-to-your-adapters
+Error: Could not create MobileFirst Project.
+Error: MobileFirst project names may only contain English alpha-numeric characters.
+----
+
+Oops. If I ever a write a http://yeoman.io/[Yeoman] generator do the 
+boilerplate for MobileFirst Platform projects, I'll have to keep in mind
+this restriction.
+
+----
+>mfp create GiveLoveToYourAdapters
+A MobileFirst Project was successfully created at ...\GiveLoveToYourAdapters
+
+>cd GiveLoveToYourAdapters
+>git init
+>git add .
+>git commit -m "As created by mfp cli"
+----
+
+== Hi, new loveable adapter
+
+----
+>mfp add adapter loveableAdapter --type http
+>git add .
+>git commit -m "After mfp add adapter"
+----
+
+To the server, and beyond!
+
+----
+> mfp create-server
+> mfp start
+> mfp deploy
+> mfp invoke loveableAdapter:getStories [\"world\"]
+----
+
+That last command is equivalent to just reaching the following URL 
+
+----
+http://localhost:10080/GiveLoveToYourAdapters/dev/invoke?adapter=loveableAdapter&procedure=getStories&parameters=["world"]
+----
+
+A `bin` directory appeared as a result of our deploy, and we needed to `.gitignore` it.
+
+== Interlude: a backend to play with
+
+Our loveable adapter will need a backend to interact with. I like 
+http://couchdb.apache.org/[CouchDB] and I like https://cloudant.com/[Cloudant] 
+(a BDaaS owned now by IBM, the company has been paying my bills for the last
+20+ years). It looks like https://github.com/pouchdb/pouchdb-server[pouchdb-server] 
+can make a nice and simple local CouchDB-compatible backend to play with;
+or, easier to integrate with testing scripts, its main building block, 
+https://github.com/pouchdb/express-pouchdb[express-pouchdb].
+
+`a-sample-backend/server.js` creates a *PouchDB* in-memory server. It can be
+executed standalone or from Grunt, with `grunt express express-keepalive`
+thanks to https://github.com/blai/grunt-express[grunt-express].
+
+== Static code analysis with JSHint
+
+http://jshint.com[JSHint] _is a program that flags suspicious usage in programs 
+written in JavaScript_. It can be http://jshint.com/install/[driven from the 
+command line, from Grunt or often from your favorite editor]. You can tune
+what it complains about using configuration files named `.jshintrc`, that 
+affects the files in the folder and subfolders where it is placed. In the root
+folder of the project, we will place a `.jshintrc` file in the project's root,
+with all the options that we want to use for the JavaScript in our adapters,
+our apps and our tests
+
+[source, json]
+----
+{
+  "undef": true,
+  "unused": true,
+  "strict": true
+}
+----
+
+But we will also want to set some settings according to the environment where
+our adapters are executed. We will do it in the file `adapters/.jshintrc`:
+
+[source, json]
+----
+{
+  "extends": "../.jshintrc",  // <1>
+  "rhino": true, <2>
+  "predef": ["WL"]
+}
+----
+<1> Get the settings from the root folder
+<2> Tell jshint that we run on rhino
+
+
