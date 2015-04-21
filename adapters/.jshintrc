@@ -1,6 +1,6 @@
 {
   "extends": "../.jshintrc",
   "rhino": true,
-  "predef": ["com", "org", "JavaAdapter", "WL"]
+  "predef": ["WL"]
 
 }

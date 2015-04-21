@@ -103,6 +103,7 @@ npm install grunt-contrib-jshint --save
 On the `jshint` task, we  want to make sure that `.jshintrc` files are used and
 that the `Gruntfile.js` itself is being checked:
 
+[source, javascript]
 ----
 jshint: {
   options: {
@@ -115,5 +116,52 @@ jshint: {
 
 And now, `grunt jshint` checks our adapters and our gruntfile.
 
+== A Lego approach to building adapters
 
+HTML Adapters need to be implemented in a single JavaScript file. This makes
+reusing and testing code very hard. Just like it is common when working in the
+front-end to build a single, minified, JavaScript file from several other
+files, we are going to build our adapter by assembling smaller files. Lets 
+forget about code reuse by copy-and-paste. 
+
+=== Pods
+
+From https://github.com/gmac/pods.js: _Pods.js is a tiny synchronous module 
+definition and dependency management library, built around a familiar 
+define/require interface._ Our adapter file will be assembled with the 
+`pods.js` file itself and the modules that we will define using it:
+
+[source, javascript]
+----
+var modules = modules || new Pod();
+
+modules.define('moduleA', function() {
+    return {
+        ...
+    };
+});
+modules.define('moduleB', ['moduleA'], function(moduleA) {
+    function factory() {
+    ...
+    }
+    return factory; 
+});
+----
+
+=== The directory structure for the Lego pieces
+
+----
+adapterlib/
+  common/
+    pods.js             <1>
+    ...                 <2>
+  loveableAdapter/
+    ...                 <3>
+    main.js             <4>
+----
+
+The files are numbered according to the order used to include them. 
+`grunt concat` http://stackoverflow.com/q/17009874/239408[is
+configured dynamically] to assemble an adapter for every subdir
+in `adapterlib`.
 

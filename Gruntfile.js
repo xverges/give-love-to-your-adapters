@@ -20,7 +20,24 @@ module.exports = function(grunt) {
     };
 
 
-    grunt.initConfig({
+    grunt.config.init({
+        concat: {
+            options: {
+                process: function(src, filepath) {
+                    return '// #### File ' + filepath + ' ####\n\n' + 
+                           src.replace(/\r/g, '') + '\n\n';
+                }
+            }
+            // Tasks are created programatically for adapterlib subfolders
+        },
+        copy: {
+            pods: {
+                src: 'node_modules/pods/pods.js',
+                dest: 'adapterlib/common/',
+                expand: true,
+                flatten: true
+            }
+        },
         express: {
             backend: {
                 options: {
@@ -52,6 +69,31 @@ module.exports = function(grunt) {
         }
     });
 
+    (function updateConcatOptionsForEveryJsAdapter() {
+
+        grunt.file.expand('adapterlib/*').forEach(function(dir) {
+            var concat;
+            var adapter = dir.substr(dir.lastIndexOf('/')+1);
+            if (adapter !== 'common') {
+                concat = grunt.config.get('concat') || {};
+                concat[adapter] = {
+                    src: ['adapterlib/common/pods.js',
+                          'adapterlib/common/*.js',
+                          'adapterlib/' + adapter + '/*.js',
+                         '!adapterlib/' + adapter + '/main.js',
+                          'adapterlib/' + adapter + '/main.js'],
+                    dest: 'adapters/' + adapter + '/' + adapter + '-impl.js'
+                };
+                grunt.config.set('concat', concat);
+            }
+        });
+    })();
+
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-express');
+
+    grunt.registerTask('setup', ['copy']);
+
 };
