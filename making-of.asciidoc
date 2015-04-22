@@ -85,7 +85,7 @@ ifndef::env-github[]
 ----
 include::.jshintrc[]
 ----
-endif:[]
+endif::[]
 
 But we will also want to set some settings according to the environment where
 our adapters are executed. We will do it in the file `adapters/.jshintrc`:
