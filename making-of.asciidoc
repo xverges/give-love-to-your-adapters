@@ -228,3 +228,13 @@ it.
 What seems to work is, rather than using `mfp start` and checking the log files,
 running the server synchronosuly with `mfp run` and inspect its output.
 
+== Keeping Eclipse happy
+
+If Eclipse tries to process our node_modules, it will get very upset. We have
+to prevent the `node_modules` and the `a-sample-backend`` from being checked
+by Eclipse, so we need to exclude them in the Resource Filters dialog so
+we don't waste memory and CPU cycles in some unneeded task
+
+image::docs/img/EclipseResourceFilters.PNG[]
+
+
