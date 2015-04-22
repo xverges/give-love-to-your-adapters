@@ -19,6 +19,7 @@ module.exports = function(grunt) {
         }
     };
 
+    grunt.util.linefeed = "\n";
 
     grunt.config.init({
         concat: {

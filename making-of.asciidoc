@@ -165,3 +165,56 @@ The files are numbered according to the order used to include them.
 configured dynamically] to assemble an adapter for every subdir
 in `adapterlib`.
 
+In the common directory, I have placed a sample `logger.js` that has
+some logging goodies. It can be used from other modules with
+`modules.require('logger').log('bla bla')`.
+
+I also tried to include a module to detect if we are running in a
+development server or a real server... 
+http://stackoverflow.com/questions/29018412/how-to-know-if-an-adapter-is-running-on-mobilefirst-development-server#comment47697093_29018506[and I failed]
+
+=== Assembling and deploying an adapter
+
+----
+>start mfp run
+
+>cd adapters
+>grunt concat & mfp build & mfp deploy
+
+>mfp invoke loveableAdapter:getStories [\"sport\"]
+----
+
+
+== I thought I was getting no love from the server
+
+=== deploy != build
+
+I assumed that `mfp deploy` on the adapters folder would build and
+deploy it. Wrong: you need to `mfp build` it before. It is a good idea
+to always deploy using the debug flag (`mfp deploy --debug`), because it will
+tell you if it has not updated the code in the server
+
+=== Enable logging
+
+`mfp create` creates a development server with logging disabled. Not what I
+wanted. You need to edit its `server.xml` file and change the level from
+`AUDIT` to (probably) `INFO`:
+
+[source, xml]
+----
+<logging consoleLogLevel="INFO" copySystemStreams="false"/>
+----
+
+To find `server.xml`, the command `mfp logs` will help, because it outputs 
+the path of directory where logs are located; the server conbfiguration files
+are in its parent folder.
+
+=== console.log is not to be trusted
+
+The logs directory (use `mfp logs` to locate it) contains a `console.log` 
+that is the main file to take care of. Well, I've seen the server happily ignore
+it.
+
+What seems to work is, rather than using `mfp start` and checking the log files,
+running the server synchronosuly with `mfp run` and inspect its output.
+

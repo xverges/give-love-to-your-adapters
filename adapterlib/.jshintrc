@@ -1,7 +1,6 @@
 {
   "extends": "../.jshintrc",
-  "strict": false,
   "rhino": true,
-  "predef": ["WL"]
+  "predef": ["WL", "Pod"]
 
 }
