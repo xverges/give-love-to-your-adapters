@@ -76,10 +76,13 @@ written in JavaScript_. It can be http://jshint.com/install/[driven from the
 command line, from Grunt or often from your favorite editor]. You can tune
 what it complains about using configuration files named `.jshintrc`, that 
 affects the files in the folder and subfolders where it is placed. In the root
-folder of the project, we will place a link:.jshintrc[.jshintrc] file in the project's root,
+folder of the project, we will place a `.jshintrc` file in the project's root,
 with all the options that we want to use for the JavaScript in our adapters,
 our apps and our tests
 
+ifdef::env-github[]
+link:.jshintrc[.jshintrc]
+endif::[]
 ifndef::env-github[]
 [source, json]
 ----
@@ -90,10 +93,15 @@ endif::[]
 But we will also want to set some settings according to the environment where
 our adapters are executed. We will do it in the file `adapters/.jshintrc`:
 
+ifdef::env-github[]
+link:adapters/.jshintrc[adapters/.jshintrc]
+endif::[]
+ifndef::env-github[]
 [source, json]
 ----
 include::adapters/.jshintrc[]
 ----
+endif::[]
 
 To drive it with Grunt, we will need to install
 https://github.com/gruntjs/grunt-contrib-jshint[grunt-contrib-jshint]
