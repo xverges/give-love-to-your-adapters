@@ -49,7 +49,17 @@ function getStories(interest) {
     clientRequest.logCookies();
     var logger = modules.require('logger');
     var req= WL.Server.getClientRequest();
-    logger.log('URL: ' + req.getRequestURI());
+    logger.log(req.getRequestURI(), {prefix: 'uri'});
+
+    logger.log(req.getServerName(), {prefix: 'server Name'});
+    logger.log(req.getServletContext().getServerInfo(), {prefix: 'server info'});
+    logger.log(req.getServletContext().getServletContextName(), {prefix: 'context name'});
+    logger.log(req.getServletContext().getRealPath('/'), {prefix: 'real path'});
+    logger.log(req.getRemoteAddr(), {prefix: 'remote addr'});
+    logger.log(req.getPathInfo(), {prefix: 'path info'});
+    logger.log(java.lang.System.getenv("PATH"), {prefix: 'environment'});
+
+
 
     return WL.Server.invokeHttp(input);
 }
