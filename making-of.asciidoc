@@ -167,7 +167,7 @@ adapterlib/
     ...                 <2>
   loveableAdapter/
     ...                 <3>
-    main.js             <4>
+    exports.js          <4>
 ----
 
 The files are numbered according to the order used to include them. 
@@ -182,6 +182,12 @@ some logging goodies. It can be used from other modules with
 I also tried to include a module to detect if we are running in a
 development server or a real server... 
 http://stackoverflow.com/questions/29018412/how-to-know-if-an-adapter-is-running-on-mobilefirst-development-server#comment47697093_29018506[and I failed]
+
+`exports.js` is where you place
+
+* `modules.require` statements that trigger the inclusion of all the modules that your
+  adapter needs
+* the functions that your adapter exports in its xml definition file
 
 === Assembling and deploying an adapter
 

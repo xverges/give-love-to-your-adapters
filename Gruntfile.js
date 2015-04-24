@@ -81,8 +81,8 @@ module.exports = function(grunt) {
                     src: ['adapterlib/common/pods.js',
                           'adapterlib/common/*.js',
                           'adapterlib/' + adapter + '/*.js',
-                         '!adapterlib/' + adapter + '/main.js',
-                          'adapterlib/' + adapter + '/main.js'],
+                         '!adapterlib/' + adapter + '/exports.js',
+                          'adapterlib/' + adapter + '/exports.js'],
                     dest: 'adapters/' + adapter + '/' + adapter + '-impl.js'
                 };
                 grunt.config.set('concat', concat);
