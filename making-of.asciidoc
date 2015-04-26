@@ -243,4 +243,37 @@ we don't waste memory and CPU cycles in some unneeded task
 
 image::docs/img/EclipseResourceFilters.PNG[]
 
+== Unit tests for the adapter chuncks
+
+Our adapter's code will be running in a Rhino environment, but, for simplicity
+and available tooling, we are going to use for our testing either a headless
+browser environment or a node.js environment. I want to use
+http://jasmine.github.io/[Jasmine] as the testing framework, and there are
+Grunt plugins for both approaches:
+https://github.com/gruntjs/grunt-contrib-jasmine runs in a PhantomJS
+environment, and  https://github.com/tepez/grunt-jasmine-npm runs in a node.js
+environment.
+
+The second approach is probably faster and simpler. However, since later on
+we will also want to test client JavaScript (intended to be executed in a
+browser environment), using PhantomJS for both environments reduces complexity.
+
+=== The directory structure for our specs
+
+----
+tests/js/
+    adapterlib/
+        common/                     <1>
+            loggerSpec.js
+            ...
+        loveableAdater/             <2>
+            ...
+    libs/
+        wl.server-side.dummy.js     <3>
+----
+<1> holds the specs for the code that is shared by different adapters.
+<2> each adapter has its own directory. 
+<3> defines a double for the parts of the `WL` api used by our code; we can replace its behaviour using Jasmine's `spyOn`.
+
+image::docs/img/gruntJasmineOutput.png[]
 

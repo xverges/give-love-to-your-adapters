@@ -10,9 +10,7 @@ module.exports = function(grunt) {
             adapters: 'adapters/**/*.js',
             apps: ['apps/*/common/js/**/*.js', '!apps/*/common/js/lib/**/*.js'],
             libs: 'apps/*/common/js/lib/**/*.js',
-            testAdapters: 'test/js/server/**/*.js',
-            testApps: 'test/js/apps/**/*.js',
-            testLib: 'test/js/lib/*.js'
+            tests: 'test/js/**/*.js'
         },
         html: {
             index: 'apps/*/common/index.html'
@@ -47,6 +45,18 @@ module.exports = function(grunt) {
                 }
             }
         },
+        jasmine: {
+            adapterlib: {
+                src: [ 'adapterlib/**/*.js',
+                      '!adapterlib/**/exports.js',  
+                      '!adapterlib/common/pods.js'],
+                options: {
+                    vendor: ['adapterlib/common/pods.js',
+                             'test/js/libs/wl.server-side.dummy.js'],
+                    specs: 'test/js/adapterlib/**/*Spec.js'
+                }
+            }
+        },
         jshint: {
             options: {
                 jshintrc: true
@@ -57,9 +67,7 @@ module.exports = function(grunt) {
             js: {
                 src: [patterns.js.adapters,
                       patterns.js.apps,
-                      patterns.js.testAdapters,
-                      patterns.js.testApps,
-                      patterns.js.testLib]
+                      patterns.js.tests]
             },
             html: {
                 src: [patterns.html.index],
@@ -92,6 +100,7 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-express');
 
