@@ -1,6 +1,7 @@
 = Give Love To Your JavaScript Adapters: the Making-Of
 Xavier Vergés 
 v0.1.0, 2015-3-16
+:icons: font
 :toc:
 :toc-placement: preamble
 :source-highlighter: pygments 	// coderay, highlightjs, prettify, and pygments.
