@@ -2,8 +2,10 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var path = require('path');
+    var fs = require('fs'),
+        path = require('path');
 
+    var envs = ['release', 'solo'];
     var patterns = {
         js: {
             gruntfile: 'Gruntfile.js',
@@ -78,25 +80,93 @@ module.exports = function(grunt) {
         }
     });
 
-    (function updateConcatOptionsForEveryJsAdapter() {
+
+    (function updateTaskConfigForEveryJsAdapter() {
+        var configOptions = {
+            concat: {
+                perEnv: false,
+                subTarget: function(adapter) { return adapter; },
+                settings: function(adapter) {
+                    return {
+                        src: ['adapterlib/common/pods.js',
+                              'adapterlib/common/*.js',
+                              'adapterlib/' + adapter + '/*.js',
+                              '!adapterlib/' + adapter + '/exports.js',
+                              'adapterlib/' + adapter + '/exports.js'],
+                        dest: 'adapters/' + adapter + '/' + adapter + '-impl.js'
+                    };
+                }
+            },
+            copy: {
+                perEnv: true,
+                subTarget: function(adapter, env) { return adapter + '_' + env; },
+                settings: function(adapter, env) {
+                    var src = '';
+                    var dest = path.join('adapters', adapter);
+                    var srcEnv = path.join('adapterlib', adapter, adapter + '_' + env + '.xml');
+                    var srcCommon = path.join('adapterlib', adapter, adapter + '.xml');
+                    if (fs.existsSync(srcEnv)) {
+                        src = srcEnv;
+                    } else if (fs.existsSync(srcCommon) ) {
+                        src = srcCommon;
+                    }
+                    if (src) {
+                        return {
+                            src: src,
+                            dest: dest,
+                            rename: function(dest, src) {   // jshint ignore:line
+                                return path.join(dest, adapter + '.xml');
+                            },
+                            expand: true,
+                            flatten: true
+                        };
+                    }
+                }
+            }
+        };
+        function taskConfig(task, adapter, env) {
+            var cfg = grunt.config.get(task) || {};
+            var key = configOptions[task].subTarget(adapter, env);
+            var settings = configOptions[task].settings(adapter, env);
+            if (settings) { 
+                cfg[key] = settings;
+                grunt.config.set(task, cfg);
+            }
+        }
 
         grunt.file.expand('adapterlib/*').forEach(function(dir) {
-            var concat;
             var adapter = dir.substr(dir.lastIndexOf('/')+1);
             if (adapter !== 'common') {
-                concat = grunt.config.get('concat') || {};
-                concat[adapter] = {
-                    src: ['adapterlib/common/pods.js',
-                          'adapterlib/common/*.js',
-                          'adapterlib/' + adapter + '/*.js',
-                         '!adapterlib/' + adapter + '/exports.js',
-                          'adapterlib/' + adapter + '/exports.js'],
-                    dest: 'adapters/' + adapter + '/' + adapter + '-impl.js'
-                };
-                grunt.config.set('concat', concat);
+                Object.keys(configOptions).forEach(function(task) {
+                    var limit = configOptions[task].perEnv? envs.length : 1;
+                    for (var ii=0; ii < limit; ii++) {
+                        taskConfig(task, adapter, envs[ii]);
+                    }
+                });
             }
         });
     })();
+
+    function subTasksForEnv(task, env) {
+        var tasks = [];
+        var suffix = '_' + env;
+        Object.keys(grunt.config.data[task]).forEach(function(subtask) {
+            var endOf = subtask.length - suffix.length;
+            if (subtask.indexOf(suffix, endOf) !== -1) {
+                tasks.push(task + ':' + subtask);
+            }
+        });
+        return tasks;
+
+    }
+
+    function dependeciesForSetupTask(env) {
+        var tasks = [];
+        tasks = tasks.concat(['copy:pods']);
+        tasks = tasks.concat(['concat']);
+        tasks = tasks.concat(subTasksForEnv('copy', env));
+        return tasks;
+    }
 
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
@@ -104,6 +174,18 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-express');
 
-    grunt.registerTask('setup', ['copy']);
+    grunt.registerTask('build', 'Build adapters for a given environment',
+                       function(env) {
+        if (-1 == envs.indexOf(env)) {
+            grunt.fail.fatal('You have to specify a target enviroment (' +
+                             envs + '). Eg. grunt build:' + envs[0]);
+        } else {
+            grunt.task.run(dependeciesForSetupTask(env));
+            grunt.task.run('jshint');
+            grunt.task.run('jasmine');
+        }
+    });
+
+    grunt.registerTask('setup', dependeciesForSetupTask(envs[0]));
 
 };

@@ -278,3 +278,31 @@ tests/js/
 
 image::docs/img/gruntJasmineOutput.png[]
 
+== Building for different purposes
+
+Having different builds for different environments is a common approach,
+http://stackoverflow.com/questions/420343/separate-debug-and-release-builds[even 
+if controversial]. I'll use Grunt to have two different builds for our adapter:
+a regular `release` build, intended for production, and a `solo` build, intended
+for being used only in the developer's workstation, using a local back-end and
+exposing adapter procedures without proper security settings.
+
+I have defined the possible environments in an `envs` variable in the Gruntfile,
+initialized with `['release', 'solo']`. `envs[0]` is the default environment.
+
+`build:solo` will build for my local environment.
+
+=== A different loveableAdapter.xml for different needs
+
+The build task may overwrite the `adapters/adapterName/adapterName.xml` file
+with a file in the `adapterlib` subfolders, where you can place xml files
+specific for a given build environment, or an xml file to be used as a default.
+
+* when building environment `foo`, if the file
+`adapterlib/adapterName/adapterName_foo.xml` exists, it is used.
+* otherwise, if the file `adapterlib/adapterName/adapterName.xml` exists,
+it is used.
+* otherwise, nothing is done. This is only a good option if you do not
+customize this adapter for any of your build environments. Otherwise,
+you could be using the xml from a previous build for a different environment.
+

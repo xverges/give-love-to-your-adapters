@@ -2,3 +2,4 @@
 /node_modules/
 /adapterlib/common/pods.js
 /adapters/loveableAdapter/loveableAdapter-impl.js
+/adapters/loveableAdapter/loveableAdapter.xml
